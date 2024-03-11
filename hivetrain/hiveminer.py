@@ -46,10 +46,10 @@ def flatten_list(nested_list):
 
 # set some basic configuration values
 initial_peers = flatten_list(args.initial_peers)
-if len(initial_peers) < 0:
-    initial_peers = "/p2p/QmVQE44X5wPo5LNheJCBMVRUTRsceJNxVowjxerPUCCZmY"
+# if len(initial_peers) < 0:
+#     initial_peers = "/p2p/QmVQE44X5wPo5LNheJCBMVRUTRsceJNxVowjxerPUCCZmY"
 
-use_ipfs = True
+use_ipfs = False
 batch_size = args.batch_size
 save_every = args.save_every
 block_size = 512
@@ -68,10 +68,10 @@ config = AutoConfig.from_pretrained(
     "gpt2",
     n_embd=block_size,
     n_ctx=block_size,
-    n_layer=8,
-    n_head=8,
+    n_layer=2,
+    n_head=2,
     n_positions=block_size,
-    n_inner=block_size * 6,
+    n_inner=block_size * 4,
     resid_pdrop=0.1,
     embd_pdrop=0.1,
     attn_pdrop=0.1,
@@ -241,6 +241,7 @@ strategy = HivemindStrategy(
     delay_optimizer_step=True,
     offload_optimizer=True,
     reuse_grad_buffers=False,
+    # host_maddrs=["/ip4/0.0.0.0/tcp/4002"],
     # grad_compression=Float16Compression(),
     # state_averaging_compression=Float16Compression(),
     # load_state_compression=NoCompression(),
@@ -527,7 +528,7 @@ class ValidationCommunicator(Callback):
 
 train_params["callbacks"].append(MinerConsoleLogging(hparams.get("num_steps")))
 train_params["callbacks"].append(MinerModelSaver(save_every, "/data"))
-train_params["callbacks"].append(ValidationCommunicator(args, 600))
+# train_params["callbacks"].append(ValidationCommunicator(args, 600))
 
 # Wrap the model in a pytorch-lightning module
 train_model = MinerTrainer(model, optimizer, hparams)

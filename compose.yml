@@ -5,7 +5,10 @@ services:
     image: ghcr.io/bit-current/hivetrain:latest
     restart: 'always'
     ipc: host
-    network_mode: host
+    # network_mode: host
+    depends_on:
+      - vpn
+    network_mode: service:vpn
     tty: true
     stdin_open: true
     build:
@@ -15,6 +18,7 @@ services:
       - ./hivetrain:/hivetrain/hivetrain
       - ./data:/data
       - ./wallets:/root/.bittensor/wallets
+    privileged: true
     deploy:
       resources:
         reservations:
@@ -46,3 +50,19 @@ services:
           devices:
             - capabilities: ["gpu"]
               count: all
+
+  vpn:
+    image: tailscale/tailscale:latest
+    hostname: tailscale
+    environment:
+      TS_AUTHKEY: tskey-client-kAbSnX3CNTRL-bs9oeHznKB8HJMQTWvAcB8XquoYBW2jt
+      TS_EXTRA_ARGS: --advertise-tags=tag:member
+      TS_STATE_DIR: /var/lib/tailscale
+      TS_USERSPACE: false
+    volumes:
+      - ${PWD}/vpn/state:/var/lib/tailscale
+      - /dev/net/tun:/dev/net/tun
+    cap_add:
+      - net_admin
+      - sys_module
+    restart: unless-stopped
