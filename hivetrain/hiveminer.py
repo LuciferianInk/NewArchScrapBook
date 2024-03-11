@@ -47,9 +47,9 @@ def flatten_list(nested_list):
 # set some basic configuration values
 initial_peers = flatten_list(args.initial_peers)
 if len(initial_peers) == 0:
-    initial_peers = (
+    initial_peers = [
         "/ip4/100.79.34.11/tcp/4002/p2p/QmVQE44X5wPo5LNheJCBMVRUTRsceJNxVowjxerPUCCZmY"
-    )
+    ]
 
 use_ipfs = False
 batch_size = args.batch_size
