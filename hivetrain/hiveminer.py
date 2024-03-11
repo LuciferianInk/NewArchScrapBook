@@ -48,6 +48,7 @@ def flatten_list(nested_list):
 initial_peers = flatten_list(args.initial_peers)
 if len(initial_peers) < 0:
     initial_peers = "/p2p/QmVQE44X5wPo5LNheJCBMVRUTRsceJNxVowjxerPUCCZmY"
+
 use_ipfs = True
 batch_size = args.batch_size
 save_every = args.save_every
@@ -526,7 +527,7 @@ class ValidationCommunicator(Callback):
 
 train_params["callbacks"].append(MinerConsoleLogging(hparams.get("num_steps")))
 train_params["callbacks"].append(MinerModelSaver(save_every, "/data"))
-# train_params["callbacks"].append(ValidationCommunicator(args, 60))
+train_params["callbacks"].append(ValidationCommunicator(args, 600))
 
 # Wrap the model in a pytorch-lightning module
 train_model = MinerTrainer(model, optimizer, hparams)
