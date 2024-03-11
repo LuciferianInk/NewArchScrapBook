@@ -13,7 +13,6 @@ import numpy as np
 import requests
 import torch
 from datasets import load_dataset
-from hivemind.utils.networking import log_visible_maddrs
 from lightning.fabric.utilities.seed import reset_seed, seed_everything
 from lightning.pytorch import LightningModule
 from lightning.pytorch.callbacks import Callback
@@ -24,6 +23,7 @@ from torch.optim import AdamW
 from torch.utils.data import DataLoader, Dataset, IterableDataset
 from transformers import AutoConfig, AutoModelForCausalLM, AutoTokenizer
 
+from hivemind.utils.networking import log_visible_maddrs
 from hivetrain.btt_connector import (
     BittensorNetwork,
     get_validator_uids_and_addresses,
@@ -46,10 +46,10 @@ def flatten_list(nested_list):
 
 # set some basic configuration values
 initial_peers = flatten_list(args.initial_peers)
-if len(initial_peers) == 0:
-    initial_peers = [
-        "/ip4/100.108.44.113/tcp/4002/p2p/QmVQE44X5wPo5LNheJCBMVRUTRsceJNxVowjxerPUCCZmY"
-    ]
+# if len(initial_peers) == 0:
+#     initial_peers = [
+#         "/ip4/100.108.44.113/tcp/4002/p2p/QmVQE44X5wPo5LNheJCBMVRUTRsceJNxVowjxerPUCCZmY"
+#     ]
 
 use_ipfs = False
 batch_size = args.batch_size
@@ -226,7 +226,7 @@ hparams = dict(
 
 # define the hivemind strategy
 strategy = HivemindStrategy(
-    run_id=f"hiveminer",
+    run_id=f"hivetrain",
     batch_size=batch_size,
     target_batch_size=target_batch_size,
     initial_peers=initial_peers,
