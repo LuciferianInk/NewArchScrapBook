@@ -447,7 +447,7 @@ class ValidationCommunicator(Callback):
                     f"{ip}:{port}"
                 )  # Format and add 'ip:port' to the list
                 # For testing will append the 127.0.0.1:4000
-                validator_addresses.append(f"127.0.0.1:4000")
+                validator_addresses.append(f"validator:4000")
         return available_uid_details, validator_addresses
 
     def on_train_batch_end(self, trainer, lm, outputs, batch, batch_idx):
