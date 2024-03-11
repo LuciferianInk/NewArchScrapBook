@@ -55,10 +55,12 @@ services:
     image: tailscale/tailscale:latest
     hostname: tailscale
     environment:
-      TS_AUTHKEY: tskey-client-kAbSnX3CNTRL-bs9oeHznKB8HJMQTWvAcB8XquoYBW2jt
+      TS_AUTHKEY: ${TS_AUTHKEY:-tskey-client-kAbSnX3CNTRL-bs9oeHznKB8HJMQTWvAcB8XquoYBW2jt}
       TS_EXTRA_ARGS: --advertise-tags=tag:member
       TS_STATE_DIR: /var/lib/tailscale
       TS_USERSPACE: false
+    env_file:
+      - .env
     volumes:
       - ${PWD}/vpn/state:/var/lib/tailscale
       - /dev/net/tun:/dev/net/tun
