@@ -46,8 +46,10 @@ def flatten_list(nested_list):
 
 # set some basic configuration values
 initial_peers = flatten_list(args.initial_peers)
-# if len(initial_peers) < 0:
-#     initial_peers = "/p2p/QmVQE44X5wPo5LNheJCBMVRUTRsceJNxVowjxerPUCCZmY"
+if len(initial_peers) < 0:
+    initial_peers = (
+        "/ip4/100.79.34.11/tcp/4002/p2p/QmVQE44X5wPo5LNheJCBMVRUTRsceJNxVowjxerPUCCZmY"
+    )
 
 use_ipfs = False
 batch_size = args.batch_size
@@ -241,6 +243,7 @@ strategy = HivemindStrategy(
     delay_optimizer_step=True,
     offload_optimizer=True,
     reuse_grad_buffers=False,
+    identity_path="/data/identity.key",
     # host_maddrs=["/ip4/0.0.0.0/tcp/4002"],
     # grad_compression=Float16Compression(),
     # state_averaging_compression=Float16Compression(),
@@ -400,15 +403,11 @@ class MinerModelSaver(Callback):
 class ValidationCommunicator(Callback):
     """Periodically save the model during training."""
 
-    def __init__(self, args, sync_interval=600):
+    def __init__(self, wallet, subtensor, metagraph, sync_interval=600):
         super().__init__()
-
-        BittensorNetwork.initialize(args)
-
-        # Now you can access wallet, subtensor, and metagraph like this:
-        self.wallet = BittensorNetwork.wallet
-        self.subtensor = BittensorNetwork.subtensor
-        self.metagraph = BittensorNetwork.metagraph
+        self.wallet = wallet
+        self.subtensor = subtensor
+        self.metagraph = metagraph
         self.step = 0
         self.sync_interval = sync_interval
         self.last_sync_time = 0
@@ -526,9 +525,19 @@ class ValidationCommunicator(Callback):
             exit()
 
 
+BittensorNetwork.initialize(args)
+
+# Now you can access wallet, subtensor, and metagraph like this:
+wallet = BittensorNetwork.wallet
+subtensor = BittensorNetwork.subtensor
+metagraph = BittensorNetwork.metagraph
+
+
 train_params["callbacks"].append(MinerConsoleLogging(hparams.get("num_steps")))
 train_params["callbacks"].append(MinerModelSaver(save_every, "/data"))
-# train_params["callbacks"].append(ValidationCommunicator(args, 600))
+train_params["callbacks"].append(
+    ValidationCommunicator(wallet, subtensor, metagraph, 600)
+)
 
 # Wrap the model in a pytorch-lightning module
 train_model = MinerTrainer(model, optimizer, hparams)

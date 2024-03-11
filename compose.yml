@@ -17,7 +17,7 @@ services:
       - ./hivetrain:/hivetrain/hivetrain
       - ./data:/data
       - ./wallets:/root/.bittensor/wallets
-    privileged: true
+    # privileged: true
     deploy:
       resources:
         reservations:
@@ -25,11 +25,11 @@ services:
             - capabilities: ["gpu"]
               count: all
     environment:
-      NETUID: ${NETUID:-25}
-      WALLETNAME: ${WALLETNAME:-default}
-      WALLETHOTKEY: ${WALLETHOTKEY:-defaulthotkey}
-      DHTPORT: ${DHTPORT:-42316}
-      AXONPORT: ${AXONPORT:-42310}
+      NETUID: ${NET_UID:-25}
+      WALLET_NAME: ${WALLET_NAME:-default}
+      WALLET_HOTKEY: ${WALLET_HOTKEY:-defaulthotkey}
+      DHTPORT: ${DHT_PORT:-42316}
+      AXONPORT: ${AXON_PORT:-42310}
     env_file:
       - .env
 
@@ -49,6 +49,14 @@ services:
           devices:
             - capabilities: ["gpu"]
               count: all
+    environment:
+      NETUID: ${NET_UID:-25}
+      WALLET_NAME: ${WALLET_NAME:-default}
+      WALLET_HOTKEY: ${WALLET_HOTKEY:-defaulthotkey}
+      DHTPORT: ${DHT_PORT:-42316}
+      AXONPORT: ${AXON_PORT:-42310}
+    env_file:
+      - .env
 
   vpn:
     image: tailscale/tailscale:latest

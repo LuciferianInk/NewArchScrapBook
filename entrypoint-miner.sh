@@ -3,4 +3,6 @@
 python3 hivetrain/hiveminer.py \
     --initial_peers ${INITIAL_PEERS} \
     --batch_size ${BATCH_SIZE} \
-    --save_every ${SAVE_EVERY}
+    --save_every ${SAVE_EVERY} \
+    --wallet.name ${WALLET_NAME} \
+    --wallet.hotkey ${WALLET_HOTKEY}
